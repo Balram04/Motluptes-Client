@@ -1,0 +1,275 @@
+
+import React, { useState, useContext, useEffect } from 'react';
+import { 
+  MDBContainer, 
+  MDBCard, 
+  MDBCardBody, 
+  MDBInput, 
+  MDBBtn, 
+  MDBIcon,
+  MDBSpinner,
+  MDBRow,
+  MDBCol
+} from 'mdb-react-ui-kit';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { PetContext } from '../Context/Context';
+import { axios } from '../Utils/Axios';
+import toast from 'react-hot-toast';
+import { FaPaw, FaEye, FaEyeSlash } from 'react-icons/fa';
+import '../Styles/Auth.css';
+
+function Login() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { setLoginStatus } = useContext(PetContext);
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+
+  // Check if user just verified their email
+  useEffect(() => {
+    if (location.state?.justVerified) {
+      toast.success('🎉 Email verified successfully! Please login to continue.');
+      // Pre-fill email if available
+      if (location.state?.email) {
+        setFormData(prev => ({ ...prev, email: location.state.email }));
+      }
+    } else if (location.state?.message) {
+      toast.info(location.state.message);
+    }
+  }, [location.state]);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const { email, password } = formData;
+    const trimmedEmail = email.trim().toLowerCase();
+    const adminEmail = process.env.REACT_APP_ADMIN_EMAIL;
+
+    // Enhanced Validation
+    if (!trimmedEmail || !password) {
+      setLoading(false);
+      return toast.error('Please fill in all fields');
+    }
+
+    if (!/\S+@\S+\.\S+/.test(trimmedEmail)) {
+      setLoading(false);
+      return toast.error('Please enter a valid email address');
+    }
+
+    if (password.length < 3) {
+      setLoading(false);
+      return toast.error('Password must be at least 3 characters long');
+    }
+
+    const endpoint = trimmedEmail === adminEmail ? '/api/admin/login' : '/api/users/login';
+    const loginData = { email: trimmedEmail, password };
+
+    try {
+      const response = await axios.post(endpoint, loginData);
+      
+      // Check if response is successful
+      if (response?.data?.status === 'success' && response?.data?.data) {
+        const { data } = response.data;
+        
+        // Store authentication data
+        if (trimmedEmail === adminEmail) {
+          localStorage.setItem('role', 'admin');
+          localStorage.setItem('name', data.name || 'Admin');
+        } else {
+          if (!data.userID) {
+            throw new Error('User ID not received from server');
+          }
+          localStorage.setItem('userID', data.userID);
+          localStorage.setItem('name', data.name || 'User');
+        }
+
+        if (!data.jwt_token) {
+          throw new Error('Authentication token not received');
+        }
+        
+        localStorage.setItem('jwt_token', data.jwt_token);
+        localStorage.setItem('loginTime', new Date().getTime().toString());
+        
+        toast.success(response.data?.message || 'Login successful!');
+        setLoginStatus(true);
+        
+        // Clear form data
+        setFormData({ email: '', password: '' });
+        
+        // Navigate based on role
+        setTimeout(() => {
+          navigate(trimmedEmail === adminEmail ? '/dashboard' : '/');
+        }, 1000);
+        
+      } else {
+        throw new Error('Invalid response structure from server');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      
+      // Handle different types of errors
+      if (error.response) {
+        // Server responded with error status
+        const status = error.response.status;
+        const message = error.response.data?.message;
+        const requiresVerification = error.response.data?.requiresVerification;
+        
+        if (status === 401) {
+          if (requiresVerification) {
+            toast.error('Please verify your email before logging in.');
+            // Navigate to OTP verification page
+            setTimeout(() => {
+              navigate('/verify-otp', { 
+                state: { 
+                  email: trimmedEmail,
+                  message: 'Please verify your email to continue'
+                }
+              });
+            }, 2000);
+          } else {
+            toast.error(message || 'Invalid email or password');
+          }
+        } else if (status === 400) {
+          toast.error(message || 'Invalid input data');
+        } else if (status >= 500) {
+          toast.error('Server error. Please try again later.');
+        } else {
+          toast.error(message || 'Login failed');
+        }
+      } else if (error.request) {
+        // Network error
+        toast.error('Network error. Please check your connection.');
+      } else {
+        // Other errors
+        toast.error(error.message || 'Login failed. Please try again.');
+      }
+      
+      // Clear sensitive form data on error
+      setFormData(prev => ({ ...prev, password: '' }));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ 
+      minHeight: '100vh', 
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      paddingTop: '100px',
+      paddingBottom: '50px'
+    }}>
+      <MDBContainer>
+        <MDBRow className="justify-content-center">
+          <MDBCol md="6" lg="5" xl="4">
+            <MDBCard className="shadow-5">
+              <MDBCardBody className="p-5">
+                {/* Logo Header */}
+                <div className="text-center mb-4">
+                  <FaPaw className="text-primary mb-3" size={40} />
+                  <h2 className="fw-bold mb-2">Welcome Back!</h2>
+                  <p className="text-muted">Sign in to your account</p>
+                </div>
+
+                <form onSubmit={handleSubmit}>
+                  {/* Email Input */}
+                  <div className="mb-4">
+                    <MDBInput
+                      label="Email Address"
+                      id="email"
+                      name="email"
+                      type="email"
+                      size="lg"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                      disabled={loading}
+                    />
+                  </div>
+
+                  {/* Password Input */}
+                  <div className="mb-4 position-relative">
+                    <MDBInput
+                      label="Password"
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      size="lg"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                      disabled={loading}
+                    />
+                    <button
+                      type="button"
+                      className="position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent me-3"
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{ zIndex: 5 }}
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+
+                  {/* Login Button */}
+                  <MDBBtn 
+                    type="submit" 
+                    color="primary" 
+                    size="lg" 
+                    className="w-100 mb-4"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <MDBSpinner size="sm" role="status" tag="span" className="me-2" />
+                        Signing In...
+                      </>
+                    ) : (
+                      <>
+                        <MDBIcon fas icon="sign-in-alt" className="me-2" />
+                        Sign In
+                      </>
+                    )}
+                  </MDBBtn>
+
+                  {/* Divider */}
+                  <div className="text-center mb-4">
+                    <p className="text-muted">Don't have an account?</p>
+                  </div>
+
+                  {/* Registration Link */}
+                  <Link to="/registration">
+                    <MDBBtn 
+                      color="secondary" 
+                      size="lg" 
+                      className="w-100" 
+                      outline
+                      disabled={loading}
+                    >
+                      <MDBIcon fas icon="user-plus" className="me-2" />
+                      Create Account
+                    </MDBBtn>
+                  </Link>
+                </form>
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+        </MDBRow>
+      </MDBContainer>
+    </div>
+  );
+}
+
+export default Login;

@@ -1,0 +1,84 @@
+/* Additional styles for OTP Verification */
+.otp-input-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.otp-digit-input {
+  width: 45px !important;
+  height: 45px !important;
+  text-align: center !important;
+  font-size: 20px !important;
+  font-weight: bold !important;
+  border: 2px solid #ddd !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  transition: all 0.3s ease !important;
+}
+
+.otp-digit-input:focus {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+  outline: none !important;
+}
+
+.otp-digit-input.filled {
+  border-color: #28a745 !important;
+  background: #f8fff9 !important;
+}
+
+.otp-verification-card {
+  background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+  border: none !important;
+  border-radius: 20px !important;
+}
+
+.verification-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px 20px 0 0 !important;
+  padding: 30px !important;
+  text-align: center;
+  color: white;
+}
+
+.countdown-timer {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  margin: 15px 0;
+}
+
+.countdown-timer.expired {
+  background: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.verification-success {
+  animation: successPulse 0.6s ease-in-out;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.resend-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.email-display {
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 8px;
+  padding: 10px;
+  word-break: break-all;
+  font-family: monospace;
+  font-size: 14px;
+}
