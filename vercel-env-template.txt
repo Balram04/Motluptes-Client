@@ -1,1 +1,16 @@
-z
+# Vercel Environment Variables Template
+# Add these in your Vercel project dashboard -> Settings -> Environment Variables
+
+# Backend API URL (replace with your actual Render URL)
+REACT_APP_BASE_URL=https://your-backend-app-name.onrender.com
+
+# Instructions:
+# 1. Go to your Vercel project dashboard
+# 2. Click on Settings -> Environment Variables
+# 3. Add the variable above with your actual backend URL
+# 4. Make sure the URL is HTTPS and matches your Render deployment
+# 5. Redeploy your frontend after adding the variable
+
+# Note: The URL should be something like:
+# REACT_APP_BASE_URL=https://doghub-backend.onrender.com
+# (without trailing slash)
