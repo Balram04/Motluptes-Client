@@ -149,42 +149,48 @@ export default function Cart() {
                       {cart.map((item, index) => (
                         <div key={item._id || index} className="cart-item-wrapper mb-4">
                           <MDBRow className="cart-item p-3 align-items-center" style={{ backgroundColor: '#fff', borderRadius: '15px', border: '2px solid #f1f3f4' }}>
-                            <MDBCol md="2">
-                              <MDBCardImage
-                                src={item?.product?.image || '/placeholder.jpg'}
-                                alt={item?.product?.title || 'Product'}
-                                fluid
-                                style={{ borderRadius: '12px', objectFit: 'cover', width: '100%', height: '120px' }}
-                              />
-                            </MDBCol>
-                            <MDBCol md="4">
-                              <MDBTypography tag="span">{item?.product?.category || 'Category'}</MDBTypography>
-                              <MDBTypography tag="h6">{item?.product?.title || 'Product Name'}</MDBTypography>
-                              <div className="product-rating mt-2">
-                                {[...Array(5)].map((_, i) => (
-                                  <MDBIcon
-                                    key={i}
-                                    fas
-                                    icon="star"
-                                    className={i < 4 ? 'text-warning' : 'text-muted'}
-                                    size="sm"
-                                  />
-                                ))}
-                                <span className="ms-2 text-muted">(4.2)</span>
+                            <MDBCol xl="2" lg="2" md="3" sm="12" xs="12" className="cart-image-col mb-3 mb-md-0">
+                              <div className="cart-image-container">
+                                <MDBCardImage
+                                  src={item?.product?.image || '/placeholder.jpg'}
+                                  alt={item?.product?.title || 'Product'}
+                                  fluid
+                                  className="cart-image"
+                                />
                               </div>
                             </MDBCol>
-                            <MDBCol md="3" className="text-center">
-                              <div className="d-flex align-items-center justify-content-center">
+                            <MDBCol xl="4" lg="4" md="5" sm="12" xs="12" className="cart-details mb-3 mb-md-0">
+                              <div className="product-info">
+                                <span className="category-tag">{item?.product?.category || 'Category'}</span>
+                                <MDBTypography tag="h6" className="product-name mt-2">{item?.product?.title || 'Product Name'}</MDBTypography>
+                                <div className="product-rating mt-2">
+                                  {[...Array(5)].map((_, i) => (
+                                    <MDBIcon
+                                      key={i}
+                                      fas
+                                      icon="star"
+                                      className={i < 4 ? 'text-warning' : 'text-muted'}
+                                      size="sm"
+                                    />
+                                  ))}
+                                  <span className="ms-2 text-muted">(4.2)</span>
+                                </div>
+                              </div>
+                            </MDBCol>
+                            <MDBCol xl="3" lg="3" md="2" sm="12" xs="12" className="cart-quantity text-center mb-3 mb-md-0">
+                              <div className="quantity-controls d-flex align-items-center justify-content-center">
                                 <Button
                                   color="light"
+                                  className="quantity-btn"
                                   onClick={() => handleQuantityChange(item._id, -1)}
                                   disabled={item.quantity <= 1}
                                   style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #ed6335', color: '#ed6335' }}
                                 >
                                   <MDBIcon fas icon="minus" />
                                 </Button>
-                                <span className="px-4" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{item.quantity}</span>
+                                <span className="quantity-display px-3" style={{ fontSize: '1.2rem', fontWeight: 'bold', minWidth: '60px' }}>{item.quantity}</span>
                                 <Button
+                                  className="quantity-btn"
                                   onClick={() => handleQuantityChange(item._id, 1)}
                                   style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#ed6335', border: 'none' }}
                                 >
@@ -192,14 +198,15 @@ export default function Cart() {
                                 </Button>
                               </div>
                             </MDBCol>
-                            <MDBCol md="2" className="text-end">
+                            <MDBCol xl="2" lg="2" md="2" sm="12" xs="12" className="cart-price text-center text-md-end mb-3 mb-md-0">
                               <MDBTypography tag="h6" style={{ color: '#ed6335', fontWeight: 'bold' }}>
                                 {handlePrice((item?.product?.price || 0) * item.quantity)}
                               </MDBTypography>
                               <small className="text-muted">{handlePrice(item?.product?.price || 0)} each</small>
                             </MDBCol>
-                            <MDBCol md="1" className="text-end">
+                            <MDBCol xl="1" lg="1" md="12" sm="12" xs="12" className="cart-delete text-center">
                               <button
+                                className="delete-btn"
                                 onClick={() => handleRemoveItem(item?.product?._id)}
                                 style={{ background: 'none', border: 'none', color: '#dc3545', fontSize: '1.2rem' }}
                               >

@@ -47,28 +47,26 @@ function Orders() {
   };
 
   useEffect(() => {
-    // Check authentication first
-    const token = localStorage.getItem('jwt_token');
+    // Check authentication - now using cookie-based auth
     const storedUserID = localStorage.getItem('userID');
     
-    if (!token || !storedUserID) {
+    if (!storedUserID || !loginStatus) {
       toast.error('Please login to view orders');
       navigate('/login');
       return;
     }
     
     fetchOrders();
-  }, [userID, loginStatus]);
+  }, [userID, loginStatus, navigate]);
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
       
-      // Get fresh userID from localStorage
+      // Get fresh userID from localStorage (no need for token check as it's in cookies)
       const currentUserID = localStorage.getItem('userID');
-      const token = localStorage.getItem('jwt_token');
       
-      if (!currentUserID || !token) {
+      if (!currentUserID) {
         toast.error('Please login to view orders');
         navigate('/login');
         return;
@@ -281,11 +279,10 @@ function Orders() {
     );
   }
 
-  // Additional authentication check
-  const token = localStorage.getItem('jwt_token');
+  // Additional authentication check - now using cookie-based auth
   const storedUserID = localStorage.getItem('userID');
   
-  if (!token || !storedUserID) {
+  if (!storedUserID || !loginStatus) {
     return (
       <section className="d-flex justify-content-center align-items-center" style={{ height: '400px', paddingTop: '80px' }}>
         <div className="text-center">

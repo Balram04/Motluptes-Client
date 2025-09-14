@@ -23,7 +23,7 @@ const Navbar = () => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { products, loginStatus, handleLogout: contextLogout, cart } = useContext(PetContext);
-  const name = localStorage.getItem('name');
+  const name = localStorage.getItem('userName');
   const navigate = useNavigate();
 
   // Check if device is mobile
@@ -137,78 +137,138 @@ const Navbar = () => {
           {/* Main Navigation Links */}
           <MDBCollapse navbar show={showCollapse} className="navbar-collapse-custom">
             <MDBNavbarNav className="navbar-nav-modern">
-              <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/')}>
-                <MDBIcon fas icon="home" className="nav-icon" />
-                <span>Home</span>
-              </MDBNavbarLink>
-              <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/products')}>
-                <MDBIcon fas icon="th-large" className="nav-icon" />
-                <span>Products</span>
-              </MDBNavbarLink>
-              <div className="nav-dropdown">
-                <MDBNavbarLink className="nav-link-modern dropdown-trigger">
-                  <MDBIcon fas icon="utensils" className="nav-icon" />
-                  <span>Pet Food</span>
-                  <MDBIcon fas icon="chevron-down" className="dropdown-arrow" />
-                </MDBNavbarLink>
-                <div className="dropdown-menu-modern">
-                  <div className="dropdown-item" onClick={() => handleNavigation('/cat-food')}>
-                    <MDBIcon fas icon="cat" className="dropdown-icon" />
-                    Cat Food
-                  </div>
-                  <div className="dropdown-item" onClick={() => handleNavigation('/dog-food')}>
-                    <MDBIcon fas icon="dog" className="dropdown-icon" />
-                    Dog Food
-                  </div>
+              {/* Mobile User Profile Section */}
+              {isMobile && (
+                <div className="mobile-profile-section">
+                  {/* Close button for mobile sidebar */}
+                  <button className="mobile-close-btn" onClick={toggleNavbar} aria-label="Close menu">
+                    <MDBIcon fas icon="times" />
+                  </button>
+                  
+                  {loginStatus ? (
+                    <div className="mobile-user-profile">
+                      <div className="mobile-user-avatar">
+                        <MDBIcon fas icon="user" />
+                      </div>
+                      <div className="mobile-user-info">
+                        <h3 className="mobile-user-name">Hi, {name ? name.split(' ')[0] : 'User'}!</h3>
+                        <p className="mobile-user-subtitle">Welcome back to MotluPets</p>
+                        <div className="mobile-user-stats">
+                          <div className="stat-item" onClick={() => handleNavigation('/orders')}>
+                            <MDBIcon fas icon="shopping-bag" />
+                            <span>Orders</span>
+                          </div>
+                          <div className="stat-item" onClick={() => handleNavigation('/wishlist')}>
+                            <MDBIcon fas icon="heart" />
+                            <span>Wishlist</span>
+                          </div>
+                          <div className="stat-item" onClick={() => handleNavigation('/cart')}>
+                            <MDBIcon fas icon="shopping-cart" />
+                            <span>Cart ({cart.length})</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mobile-guest-profile">
+                      <div className="mobile-guest-avatar">
+                        <MDBIcon fas icon="user-circle" />
+                      </div>
+                      <div className="mobile-guest-info">
+                        <h3 className="mobile-guest-title">Welcome to MotluPets!</h3>
+                        <p className="mobile-guest-subtitle">Sign in for better experience</p>
+                        <div className="mobile-auth-buttons">
+                          <button className="mobile-auth-btn primary" onClick={() => handleNavigation('/login')}>
+                            Sign In
+                          </button>
+                          <button className="mobile-auth-btn secondary" onClick={() => handleNavigation('/registration')}>
+                            Sign Up
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
+              )}
+
+              {/* Main Navigation Section */}
+              <div className="nav-section">
+                {isMobile && <div className="nav-section-header">Shop</div>}
+                <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/')}>
+                  <MDBIcon fas icon="home" className="nav-icon" />
+                  <span>Home</span>
+                </MDBNavbarLink>
+                <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/products')}>
+                  <MDBIcon fas icon="th-large" className="nav-icon" />
+                  <span>All Products</span>
+                </MDBNavbarLink>
+                {/* Show Pet Food dropdown only on desktop */}
+                {!isMobile && (
+                  <div className="nav-dropdown">
+                    <MDBNavbarLink className="nav-link-modern dropdown-trigger">
+                      <MDBIcon fas icon="utensils" className="nav-icon" />
+                      <span>Pet Food</span>
+                      <MDBIcon fas icon="chevron-down" className="dropdown-arrow" />
+                    </MDBNavbarLink>
+                    <div className="dropdown-menu-modern">
+                      <div className="dropdown-item" onClick={() => handleNavigation('/cat-food')}>
+                        <MDBIcon fas icon="cat" className="dropdown-icon" />
+                        Cat Food
+                      </div>
+                      <div className="dropdown-item" onClick={() => handleNavigation('/dog-food')}>
+                        <MDBIcon fas icon="dog" className="dropdown-icon" />
+                        Dog Food
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-              
+
               {/* Mobile-only navigation items */}
               {isMobile && (
                 <>
-                  <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/about')}>
-                    <MDBIcon fas icon="info-circle" className="nav-icon" />
-                    <span>About</span>
-                  </MDBNavbarLink>
-                  <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/contact')}>
-                    <MDBIcon fas icon="phone" className="nav-icon" />
-                    <span>Contact</span>
-                  </MDBNavbarLink>
-                  
-                  {/* Mobile Auth Links */}
-                  {!loginStatus && (
-                    <>
-                      <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/login')}>
-                        <MDBIcon fas icon="sign-in-alt" className="nav-icon" />
-                        <span>Sign In</span>
-                      </MDBNavbarLink>
-                      <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/registration')}>
-                        <MDBIcon fas icon="user-plus" className="nav-icon" />
-                        <span>Sign Up</span>
-                      </MDBNavbarLink>
-                    </>
-                  )}
-                  
-                  {/* Mobile User Menu Items */}
+              
+
+                  {/* Account Section */}
                   {loginStatus && (
-                    <>
+                    <div className="nav-section">
+                      <div className="nav-section-header">Account</div>
                       <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/profile')}>
                         <MDBIcon fas icon="user-circle" className="nav-icon" />
                         <span>My Profile</span>
                       </MDBNavbarLink>
-                      <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/orders')}>
-                        <MDBIcon fas icon="shopping-bag" className="nav-icon" />
-                        <span>My Orders</span>
+                      <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/settings')}>
+                        <MDBIcon fas icon="cog" className="nav-icon" />
+                        <span>Settings</span>
                       </MDBNavbarLink>
-                      <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/wishlist')}>
-                        <MDBIcon fas icon="heart" className="nav-icon" />
-                        <span>Wishlist</span>
-                      </MDBNavbarLink>
+                    </div>
+                  )}
+
+                  {/* Support Section */}
+                  <div className="nav-section">
+                    <div className="nav-section-header">Support</div>
+                    <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/about')}>
+                      <MDBIcon fas icon="info-circle" className="nav-icon" />
+                      <span>About Us</span>
+                    </MDBNavbarLink>
+                    <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/contact')}>
+                      <MDBIcon fas icon="phone" className="nav-icon" />
+                      <span>Contact Support</span>
+                    </MDBNavbarLink>
+                    <MDBNavbarLink className="nav-link-modern" onClick={() => handleNavigation('/help')}>
+                      <MDBIcon fas icon="question-circle" className="nav-icon" />
+                      <span>Help Center</span>
+                    </MDBNavbarLink>
+                  </div>
+
+                  {/* Logout Section */}
+                  {loginStatus && (
+                    <div className="nav-section logout-section">
                       <MDBNavbarLink className="nav-link-modern logout" onClick={handleLogout}>
                         <MDBIcon fas icon="sign-out-alt" className="nav-icon" />
                         <span>Log Out</span>
                       </MDBNavbarLink>
-                    </>
+                    </div>
                   )}
                 </>
               )}

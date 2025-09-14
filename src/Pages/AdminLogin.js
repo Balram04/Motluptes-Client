@@ -84,7 +84,7 @@ function AdminLogin() {
                 label="Admin Email" 
                 name="email"
                 required
-                value={"balramprajapati3263@gmail.com"}
+                value={""}
                 placeholder="admin@doghub.com"
               />
             </div>
@@ -94,7 +94,7 @@ function AdminLogin() {
                 type="password" 
                 label="Password" 
                 name="password"
-                value={"admin@123"}
+                value={""}
                 required
                 placeholder="Enter your password"
               />

@@ -21,7 +21,7 @@ import '../Styles/Auth.css';
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setLoginStatus } = useContext(PetContext);
+  const { setLoginStatus, handleLoginSuccess } = useContext(PetContext);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -83,27 +83,27 @@ function Login() {
       if (response?.data?.status === 'success' && response?.data?.data) {
         const { data } = response.data;
         
-        // Store authentication data
+        // Store authentication data (no JWT token needed - it's in HTTP-only cookies)
         if (trimmedEmail === adminEmail) {
           localStorage.setItem('role', 'admin');
-          localStorage.setItem('name', data.name || 'Admin');
+          localStorage.setItem('userName', data.name || 'Admin');
+          localStorage.setItem('userEmail', trimmedEmail);
         } else {
           if (!data.userID) {
             throw new Error('User ID not received from server');
           }
           localStorage.setItem('userID', data.userID);
-          localStorage.setItem('name', data.name || 'User');
+          localStorage.setItem('userName', data.name || 'User');
+          localStorage.setItem('userEmail', data.email || trimmedEmail);
         }
 
-        if (!data.jwt_token) {
-          throw new Error('Authentication token not received');
-        }
-        
-        localStorage.setItem('jwt_token', data.jwt_token);
-        localStorage.setItem('loginTime', new Date().getTime().toString());
-        
         toast.success(response.data?.message || 'Login successful!');
         setLoginStatus(true);
+        
+        // Update context with user data
+        if (data.userID) {
+          handleLoginSuccess(data);
+        }
         
         // Clear form data
         setFormData({ email: '', password: '' });

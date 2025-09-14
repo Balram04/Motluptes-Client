@@ -7,49 +7,75 @@ import toast from 'react-hot-toast';
 const PetContext = createContext();
 
 const PetProvider = ({ children }) => {
-  const userID = localStorage.getItem('userID');
+  const [userID, setUserID] = useState(localStorage.getItem('userID'));
   const [products, setProducts] = useState([]);
   const [loginStatus, setLoginStatus] = useState(false);
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = useCallback(async () => {
+    try {
+      // Call logout endpoint to clear cookies
+      await axios.post('/api/users/logout');
+    } catch (error) {
+      console.error('Logout API call failed:', error);
+      // Continue with local cleanup even if API call fails
+    }
+    
+    // Clear local storage
     localStorage.clear();
+    setUserID(null);
     setLoginStatus(false);
     setCart([]);
     setWishlist([]);
-    navigate('/');
+    navigate('/login');
   }, [navigate]);
 
+  const handleLoginSuccess = useCallback((userData) => {
+    // Update context state after successful login
+    setUserID(userData.userID);
+    setLoginStatus(true);
+    // You might want to fetch cart and wishlist here too
+  }, []);
+
   useEffect(() => {
-    const validateAuthentication = () => {
-      const storedToken = localStorage.getItem('jwt_token');
-      const userID = localStorage.getItem('userID');
-      const role = localStorage.getItem('role');
-      const loginTime = localStorage.getItem('loginTime');
-
-      if (storedToken && (userID || role === 'admin')) {
-        if (loginTime) {
-          const currentTime = new Date().getTime();
-          const timeDiff = currentTime - parseInt(loginTime);
-          const tenMinutes = 10 * 60 * 1000;
-
-          if (timeDiff > tenMinutes) {
-            console.log('Session expired');
-            handleLogout();
-            toast.error('Session expired. Please login again.');
-            return;
+    const checkAuthentication = async () => {
+      try {
+        // Check if user data exists in localStorage
+        const storedUserID = localStorage.getItem('userID');
+        const userName = localStorage.getItem('userName');
+        
+        if (storedUserID && userName) {
+          setUserID(storedUserID); // Update userID state
+          // Try to make an authenticated request to verify the session
+          try {
+            await axios.get(`/api/users/${storedUserID}/cart`);
+            setLoginStatus(true);
+          } catch (error) {
+            if (error.response?.status === 401) {
+              // Authentication failed, clear local data
+              localStorage.clear();
+              setUserID(null);
+              setLoginStatus(false);
+            }
           }
+        } else {
+          setUserID(null);
+          setLoginStatus(false);
         }
-        setLoginStatus(true);
-      } else {
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        setUserID(null);
         setLoginStatus(false);
+      } finally {
+        setLoading(false);
       }
     };
 
-    validateAuthentication();
-  }, [handleLogout]);
+    checkAuthentication();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -237,6 +263,7 @@ const PetProvider = ({ children }) => {
     <PetContext.Provider
       value={{
         products,
+        userID,
         fetchProductDetails,
         fetchCatFood,
         fetchDogFood,
@@ -247,7 +274,9 @@ const PetProvider = ({ children }) => {
         cart,
         loginStatus,
         setLoginStatus,
+        loading,
         handleLogout,
+        handleLoginSuccess,
         fetchWishlist,
         addToWishlist,
         removeFromWishlist,
