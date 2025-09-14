@@ -17,6 +17,9 @@ import Button from '../Components/Button';
 import '../Styles/Checkout.css';
 import toast from 'react-hot-toast';
 
+// API Base URL configuration
+const API_BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:5001';
+
 export default function Checkout() {
   const navigate = useNavigate();
   const {
@@ -138,11 +141,12 @@ export default function Checkout() {
     try {
       if (formData.paymentMethod === 'cod') {
         // Handle COD order
-        const response = await fetch(`http://localhost:5001/api/users/${userID}/cod-order`, {
+        const response = await fetch(`${API_BASE_URL}/api/users/${userID}/cod-order`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify({
             shippingAddress,
             phoneNumber: formData.phoneNumber,
@@ -161,11 +165,12 @@ export default function Checkout() {
       } else {
         // Handle Razorpay payment
         console.log('🚀 Initiating Razorpay payment...');
-        const response = await fetch(`http://localhost:5001/api/users/${userID}/payment`, {
+        const response = await fetch(`${API_BASE_URL}/api/users/${userID}/payment`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-          }
+          },
+          credentials: 'include'
         });
         
         console.log('📡 Payment response status:', response.status);
@@ -187,11 +192,12 @@ export default function Checkout() {
               setLoading(true);
               // Verify payment
               try {
-                const verifyResponse = await fetch('http://localhost:5001/api/users/payment/verify', {
+                const verifyResponse = await fetch(`${API_BASE_URL}/api/users/payment/verify`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
                   },
+                  credentials: 'include',
                   body: JSON.stringify({
                     ...razorpayResponse,
                     shippingAddress,
