@@ -4,6 +4,61 @@
   box-sizing: border-box;
 }
 
+/* Home Page Styles */
+.home-container {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.products-section {
+  padding: 3rem 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  min-height: 600px;
+}
+
+.products-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 0 1rem;
+}
+
+.products-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  color: #1a202c;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.products-title .highlight {
+  background: linear-gradient(135deg, #f7711e 0%, #524711 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+.products-title .highlight::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(135deg, #f7711e 0%, #524711 100%);
+  border-radius: 2px;
+}
+
+.products-subtitle {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: #64748b;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
 .categories span,
 .products span,
 .services span,
@@ -182,5 +237,93 @@
   .best-seller-name {
     font-weight: 500 !important;
     font-size: medium;
+  }
+
+  /* Mobile optimizations for products section */
+  .products-section {
+    padding: 2rem 0;
+  }
+
+  .products-header {
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+  }
+
+  .products-title {
+    margin-bottom: 0.8rem;
+  }
+
+  .products-title .highlight::after {
+    width: 40px;
+    height: 3px;
+    bottom: -8px;
+  }
+}
+
+/* Additional mobile improvements */
+@media (max-width: 480px) {
+  .products-section {
+    padding: 1.5rem 0;
+  }
+
+  .products-header {
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .products-title {
+    margin-bottom: 0.6rem;
+  }
+
+  .products-title .highlight::after {
+    width: 30px;
+    height: 2px;
+    bottom: -6px;
+  }
+}
+
+/* Smooth animations */
+.products-header {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Section spacing improvements */
+.home-container > section:not(:last-child) {
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .home-container > section:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+
+  .products-section {
+    padding: 2rem 0;
+  }
+
+  .products-header {
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+  }
+
+  .products-title {
+    margin-bottom: 0.8rem;
+  }
+
+  .products-title .highlight::after {
+    width: 40px;
+    height: 3px;
+    bottom: -8px;
   }
 }

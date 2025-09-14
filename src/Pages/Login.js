@@ -95,6 +95,14 @@ function Login() {
           localStorage.setItem('userID', data.userID);
           localStorage.setItem('userName', data.name || 'User');
           localStorage.setItem('userEmail', data.email || trimmedEmail);
+          
+          // Store user data for profile auto-fill if not already stored
+          if (data.name && !localStorage.getItem('name')) {
+            localStorage.setItem('name', data.name);
+          }
+          if ((data.email || trimmedEmail) && !localStorage.getItem('email')) {
+            localStorage.setItem('email', data.email || trimmedEmail);
+          }
         }
 
         toast.success(response.data?.message || 'Login successful!');
@@ -164,24 +172,17 @@ function Login() {
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      paddingTop: '100px',
-      paddingBottom: '50px'
-    }}>
+    <div className="auth-container">
       <MDBContainer>
         <MDBRow className="justify-content-center">
           <MDBCol md="6" lg="5" xl="4">
-            <MDBCard className="shadow-5">
+            <MDBCard className="auth-card shadow-5">
               <MDBCardBody className="p-5">
                 {/* Logo Header */}
-                <div className="text-center mb-4">
-                  <FaPaw className="text-primary mb-3" size={40} />
-                  <h2 className="fw-bold mb-2">Welcome Back!</h2>
-                  <p className="text-muted">Sign in to your account</p>
+                <div className="auth-header text-center mb-4">
+                  <FaPaw className="auth-icon text-primary mb-3" size={40} />
+                  <h2 className="auth-title fw-bold mb-2">Welcome Back!</h2>
+                  <p className="auth-subtitle text-muted">Sign in to your account</p>
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -215,9 +216,8 @@ function Login() {
                     />
                     <button
                       type="button"
-                      className="position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent me-3"
+                      className="password-toggle-btn"
                       onClick={() => setShowPassword(!showPassword)}
-                      style={{ zIndex: 5 }}
                     >
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
@@ -228,7 +228,7 @@ function Login() {
                     type="submit" 
                     color="primary" 
                     size="lg" 
-                    className="w-100 mb-4"
+                    className="auth-btn w-100 mb-4"
                     disabled={loading}
                   >
                     {loading ? (
@@ -245,8 +245,8 @@ function Login() {
                   </MDBBtn>
 
                   {/* Divider */}
-                  <div className="text-center mb-4">
-                    <p className="text-muted">Don't have an account?</p>
+                  <div className="auth-divider text-center mb-4">
+                    <span>Don't have an account?</span>
                   </div>
 
                   {/* Registration Link */}
@@ -254,7 +254,7 @@ function Login() {
                     <MDBBtn 
                       color="secondary" 
                       size="lg" 
-                      className="w-100" 
+                      className="auth-btn-outline w-100" 
                       outline
                       disabled={loading}
                     >

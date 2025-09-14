@@ -76,6 +76,27 @@ function OTPVerification() {
       if (response?.data?.status === 'success') {
         toast.success('✅ Email verified successfully!');
         
+        // Transfer temporary user data to permanent profile data
+        const tempName = localStorage.getItem('tempUserName');
+        const tempEmail = localStorage.getItem('tempUserEmail');
+        
+        if (tempName) {
+          localStorage.setItem('name', tempName);
+          localStorage.setItem('userName', tempName);
+          localStorage.removeItem('tempUserName');
+        }
+        
+        if (tempEmail) {
+          localStorage.setItem('email', tempEmail);
+          localStorage.setItem('userEmail', tempEmail);
+          localStorage.removeItem('tempUserEmail');
+        }
+        
+        // Set member since date for new users
+        if (!localStorage.getItem('memberSince')) {
+          localStorage.setItem('memberSince', new Date().toISOString().split('T')[0]);
+        }
+        
         // Navigate to login page after verification
         setTimeout(() => {
           navigate('/login', { 
@@ -159,18 +180,11 @@ function OTPVerification() {
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      paddingTop: '100px',
-      paddingBottom: '50px'
-    }}>
+    <div className="auth-container">
       <MDBContainer>
         <MDBRow className="justify-content-center">
           <MDBCol md="6" lg="5" xl="4">
-            <MDBCard className="shadow-5 otp-verification-card">
+            <MDBCard className="auth-card shadow-5 otp-verification-card">
               <div className="verification-header">
                 <FaEnvelope size={50} className="mb-3" />
                 <h2 className="fw-bold mb-2">Verify Your Email</h2>

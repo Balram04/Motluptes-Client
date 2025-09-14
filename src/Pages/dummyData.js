@@ -5,10 +5,6 @@ export const categories = [
     path: '/cat-food',
   },
   {
-    name: 'Cat Toys',
-    imageUrl: 'https://res.cloudinary.com/dmzqckfj4/image/upload/v1706504946/home%20page/zitnln1nvxqgik1crepq.jpg',
-  },
-  {
     name: 'Dog Food',
     imageUrl: 'https://res.cloudinary.com/dmzqckfj4/image/upload/v1706504966/home%20page/m9pfuvaf1ri1wxzvfknz.jpg',
     path: '/dog-food',

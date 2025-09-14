@@ -1,7 +1,7 @@
 /* Authentication Pages Styles */
 .auth-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f7711e 0%, #524711 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #e9ecef 100%);
   display: flex;
   align-items: center;
   padding-top: 100px;
@@ -22,7 +22,7 @@
 }
 
 .auth-icon {
-  color: #667eea;
+  color: #f7711e;
   margin-bottom: 1rem;
   animation: float 3s ease-in-out infinite;
 }
@@ -63,36 +63,36 @@
 }
 
 .password-toggle-btn:hover {
-  color: #667eea;
+  color: #f7711e;
 }
 
 .auth-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(135deg, #f7711e 0%, #ed6335 100%) !important;
   border: none !important;
   border-radius: 25px !important;
   font-weight: 600 !important;
   transition: all 0.3s ease !important;
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3) !important;
+  box-shadow: 0 5px 15px rgba(247, 113, 30, 0.3) !important;
 }
 
 .auth-btn:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
+  box-shadow: 0 8px 25px rgba(247, 113, 30, 0.4) !important;
 }
 
 .auth-btn-outline {
-  border: 2px solid #667eea !important;
-  color: #667eea !important;
+  border: 2px solid #f7711e !important;
+  color: #f7711e !important;
   border-radius: 25px !important;
   font-weight: 600 !important;
   transition: all 0.3s ease !important;
 }
 
 .auth-btn-outline:hover {
-  background: #667eea !important;
+  background: #f7711e !important;
   color: white !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3) !important;
+  box-shadow: 0 5px 15px rgba(247, 113, 30, 0.3) !important;
 }
 
 .auth-divider {
@@ -129,6 +129,8 @@
   .auth-container {
     padding-top: 80px;
     padding-bottom: 30px;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   
   .auth-card .card-body {
@@ -138,16 +140,131 @@
   .auth-title {
     font-size: 1.5rem;
   }
+
+  /* Improve card responsiveness */
+  .auth-card {
+    margin: 0 0.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Better spacing for mobile forms */
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Improved input sizes for mobile */
+  .form-control {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 0.75rem 1rem;
+  }
 }
 
 @media (max-width: 480px) {
   .auth-container {
     padding-top: 60px;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
   
   .auth-card .card-body {
     padding: 1.5rem !important;
+  }
+
+  .auth-card {
+    margin: 0 0.25rem;
+    border-radius: 15px;
+  }
+
+  /* Smaller font sizes for very small screens */
+  .auth-title {
+    font-size: 1.3rem;
+  }
+
+  .auth-subtitle {
+    font-size: 0.9rem;
+  }
+
+  /* Optimize button sizes for mobile */
+  .auth-btn, .auth-btn-outline {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.95rem !important;
+  }
+
+  /* Better input field spacing */
+  .mb-4 {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Improved password toggle button positioning */
+  .password-toggle-btn {
+    right: 12px;
+    padding: 8px;
+  }
+}
+
+/* Extra small screens (below 375px) */
+@media (max-width: 375px) {
+  .auth-container {
+    padding-top: 40px;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .auth-card .card-body {
+    padding: 1.25rem !important;
+  }
+
+  .auth-title {
+    font-size: 1.2rem;
+  }
+
+  .form-validation-text {
+    font-size: 0.75rem;
+  }
+}
+
+/* Additional mobile improvements */
+.auth-card {
+  transition: all 0.3s ease;
+}
+
+.auth-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+}
+
+/* Improve touch targets for mobile */
+@media (max-width: 768px) {
+  .auth-btn, .auth-btn-outline {
+    min-height: 48px; /* Minimum touch target size */
+  }
+
+  .password-toggle-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Loading state improvements */
+.auth-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Better focus states for accessibility */
+.form-control:focus {
+  border-color: #f7711e;
+  box-shadow: 0 0 0 0.2rem rgba(247, 113, 30, 0.25);
+}
+
+/* Dark mode support for better visibility */
+@media (prefers-color-scheme: dark) {
+  .auth-card {
+    background: rgba(255, 255, 255, 0.98);
+  }
+  
+  .auth-title, .auth-subtitle {
+    color: #333;
   }
 }

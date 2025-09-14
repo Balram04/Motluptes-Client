@@ -86,6 +86,10 @@ function Registration() {
       if (response?.data?.status === 'success') {
         toast.success('📧 Verification code sent! Please check your email.');
         
+        // Store user data temporarily for auto-fill after verification
+        localStorage.setItem('tempUserName', trimmedName);
+        localStorage.setItem('tempUserEmail', trimmedEmail);
+        
         // Clear form
         setFormData({ name: '', email: '', password: '' });
         
@@ -93,6 +97,7 @@ function Registration() {
         navigate('/verify-otp', { 
           state: { 
             email: trimmedEmail,
+            name: trimmedName,
             message: 'Please check your email for the verification code'
           }
         });
@@ -134,24 +139,17 @@ function Registration() {
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      paddingTop: '100px',
-      paddingBottom: '50px'
-    }}>
+    <div className="auth-container">
       <MDBContainer>
         <MDBRow className="justify-content-center">
           <MDBCol md="6" lg="5" xl="4">
-            <MDBCard className="shadow-5">
+            <MDBCard className="auth-card shadow-5">
               <MDBCardBody className="p-5">
                 {/* Logo Header */}
-                <div className="text-center mb-4">
-                  <FaPaw className="text-primary mb-3" size={40} />
-                  <h2 className="fw-bold mb-2">Join MotluPets!</h2>
-                  <p className="text-muted">Create your account to get started</p>
+                <div className="auth-header text-center mb-4">
+                  <FaPaw className="auth-icon text-primary mb-3" size={40} />
+                  <h2 className="auth-title fw-bold mb-2">Join MotluPets!</h2>
+                  <p className="auth-subtitle text-muted">Create your account to get started</p>
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -200,9 +198,8 @@ function Registration() {
                     />
                     <button
                       type="button"
-                      className="position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent me-3"
+                      className="password-toggle-btn"
                       onClick={() => setShowPassword(!showPassword)}
-                      style={{ zIndex: 5 }}
                     >
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
@@ -210,7 +207,7 @@ function Registration() {
 
                   {/* Password Requirements */}
                   <div className="mb-4">
-                    <small className="text-muted">
+                    <small className="form-validation-text text-muted">
                       Password must be at least 6 characters with uppercase, lowercase, and number
                     </small>
                   </div>
@@ -220,7 +217,7 @@ function Registration() {
                     type="submit" 
                     color="primary" 
                     size="lg" 
-                    className="w-100 mb-4"
+                    className="auth-btn w-100 mb-4"
                     disabled={loading}
                   >
                     {loading ? (
@@ -237,8 +234,8 @@ function Registration() {
                   </MDBBtn>
 
                   {/* Divider */}
-                  <div className="text-center mb-4">
-                    <p className="text-muted">Already have an account?</p>
+                  <div className="auth-divider text-center mb-4">
+                    <span>Already have an account?</span>
                   </div>
 
                   {/* Login Link */}
@@ -246,7 +243,7 @@ function Registration() {
                     <MDBBtn 
                       color="secondary" 
                       size="lg" 
-                      className="w-100" 
+                      className="auth-btn-outline w-100" 
                       outline
                       disabled={loading}
                     >

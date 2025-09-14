@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { MDBIcon } from 'mdb-react-ui-kit';
 import { PetContext } from '../Context/Context';
+import { axios } from '../Utils/Axios';
 import HomeAdmin from './HomeAdmin';
 import UsersAdmin from './UsersAdmin';
 import ProductsAdmin from './ProductsAdmin';
@@ -25,7 +26,7 @@ export default function Dashboard() {
   const isEditProducts = location.pathname.startsWith('/dashboard/products/');
 
   const { loginStatus, setLoginStatus } = useContext(PetContext);
-  const name = localStorage.getItem('name');
+  const name = localStorage.getItem('userName'); // Fixed: was 'name', should be 'userName'
   const role = localStorage.getItem('role');
 
   return (
@@ -68,10 +69,17 @@ export default function Dashboard() {
                 <div
                   className="d-flex flex-column justify-content-center align-items-center"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => {
+                  onClick={async () => {
+                    try {
+                      // Call admin logout endpoint to clear cookies
+                      await axios.post('/api/admin/logout');
+                    } catch (error) {
+                      console.error('Admin logout error:', error);
+                    }
+                    
                     setLoginStatus(false);
                     localStorage.clear();
-                    navigate('/login');
+                    navigate('/'); // Redirect to home page after logout
                   }}
                 >
                   <MDBIcon fas icon="sign-out-alt" color="dark" />

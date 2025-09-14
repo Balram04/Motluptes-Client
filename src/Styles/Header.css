@@ -5,133 +5,176 @@
 }
 
 .header {
-  background-image: url('https://res.cloudinary.com/dlcnv2mkm/image/upload/v1754595068/view-cats-dogs-being-friends_nkolg9.jpg');
+  /* Desktop image (default) */
+  background-image: url('https://res.cloudinary.com/dlcnv2mkm/image/upload/v1757865316/Gemini_Generated_Image_e40lzxe40lzxe40l_fgyttx.png');
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center center;
+  background-position: 20% 70%  ;
   width: 100%;
-  height:50rem;
-  margin-top: 45px;
+  height: 47rem;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: -10px;
 }
 
+/* Phone mode - use current image */
+@media (max-width: 768px) {
+  .header {
+    background-image: url('https://res.cloudinary.com/dlcnv2mkm/image/upload/v1757866520/Gemini_Generated_Image_ogkr9gogkr9gogkr_wcgn9l.png');
+   margin-bottom: -50px;
+  }
+}
+
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
 
 .header-info {
   font-family: 'Bangers', cursive;
-  color: rgb(8, 0, 0);
-  position: absolute;
-  top: 50%;
-  left: 25%;
-  transform: translate(-50%, -50%);
+  color: white;
+  position: relative;
+  z-index: 2;
   text-align: center;
+  margin-left: -52%;
+  max-width: 90%;
+  padding: 2rem;
 }
 
 .header-info h2 {
-  line-height: 0.5;
-  font-size: 6vw;
-  max-width: 100%;
+  line-height: 1.2;
+  font-size: clamp(2rem, 6vw, 4rem);
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .header-info h1 {
-  font-size: 11vw;
-  max-width: 100%;
+  font-size: clamp(3rem, 11vw, 7rem);
+  margin-bottom: 1rem;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
 }
 
 .header-info p {
-  font-family: serif;
-  font-size: 2vw;
-  max-width: 100%;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  margin-bottom: 2rem;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .header-button {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', sans-serif;
   text-transform: capitalize;
-  font-size: 1.2vw;
+  font-size: clamp(0.9rem, 1.2vw, 1.1rem);
   border-radius: 30px;
-  box-shadow: none;
-  padding: 10px 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  padding: 12px 24px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.header-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 @media (max-width: 1200px) {
   .header {
-    height: 610px;
+    height: 45rem;
   }
 }
 
 @media (max-width: 992px) {
-  .header-info {
-    top: 50%;
-    transition: 1s;
+  .header {
+    height: 40rem;
+    margin-top: 70px;
   }
 
-  .header {
-    height: 520px;
-    transition: 1s;
+  .header-info {
+    padding: 1.5rem;
   }
 }
 
 @media (max-width: 768px) {
-  .header-info {
-    top: 55%;
-    left: 30%;
+  .header {
+    height: 35rem;
+    margin-top: 70px;
   }
 
-  .header {
-    height: 400px;
-    transition: 1s;
+  .header-info {
+    padding: 1rem;
+    max-width: 95%;
+    margin-left: 0;
+  }
+
+  .header-info h2 {
+    margin-bottom: 0.3rem;
+  }
+
+  .header-info h1 {
+    margin-bottom: 0.8rem;
+  }
+
+  .header-info p {
+    margin-bottom: 1.5rem;
+  }
+
+  .header-button {
+    padding: 20px 20px;
   }
 }
 
 @media (max-width: 576px) {
-  .header-info {
-    top: 30%;
-    left: 50%;
-    transform: translateX(-50%);
+  .header {
+    height: 30rem;
+    margin-top: 40px;
+    background-position: center;
   }
 
-  .header {
-    background-size: cover;
-    background-position: left;
-    height: 400px;
+  .header-info {
+    padding: 0.8rem;
+    max-width: 100%;
+    margin-bottom: 40px;
+    margin-left: 0;
   }
 
   .header-info h2 {
-    font-size: 10vw;
+    margin-bottom: 0.2rem;
   }
 
   .header-info h1 {
-    font-size: 15vw;
+    margin-bottom: 0.6rem;
   }
 
   .header-info p {
-    font-size: 3vw;
+    margin-bottom: 1  .0rem;
   }
 
   .header-button {
-    font-size: 2vw;
+    padding: 8px 16px;
   }
 }
 
 @media (max-width: 350px) {
+  .header {
+    height: 25rem;
+  }
+
   .header-info {
-    top: 35%;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .header-info h2 {
-    font-size: 11vw;
-  }
-
-  .header-info h1 {
-    font-size: 16vw;
-  }
-
-  .header-info p {
-    font-size: 4vw;
+    padding: 0.6rem;
+    margin-left: 0;
   }
 
   .header-button {
-    font-size: 2.5vw;
+    padding: 6px 14px;
   }
 }

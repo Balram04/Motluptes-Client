@@ -1174,11 +1174,14 @@
   .search-box-modern.active {
     width: 220px;
     right: 60px;
+    left: auto;
   }
 
   .search-results-modern {
     width: 280px;
-    right: 60px;
+    right: 10px;
+    left: auto;
+    max-width: calc(100vw - 20px);
   }
 
   .profile-btn {
@@ -1225,13 +1228,16 @@
   }
 
   .search-box-modern.active {
-    width: 200px;
+    width: 180px;
     right: 50px;
+    left: auto;
   }
 
   .search-results-modern {
     width: 240px;
-    right: 50px;
+    right: 10px;
+    left: auto;
+    max-width: calc(100vw - 20px);
   }
 
   .profile-btn {
@@ -1447,5 +1453,26 @@
 
   .nav-section-header {
     padding: 0.8rem 1rem 0.4rem 1rem;
+  }
+}
+
+/* Mobile search improvements */
+@media (max-width: 576px) {
+  .search-box-modern {
+    right: 10px;
+  }
+
+  .search-box-modern.active {
+    width: calc(100vw - 120px);
+    right: 10px;
+    left: auto;
+    max-width: 250px;
+  }
+
+  .search-results-modern {
+    width: calc(100vw - 20px);
+    right: 10px;
+    left: auto;
+    max-width: 300px;
   }
 }

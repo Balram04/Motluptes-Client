@@ -40,8 +40,12 @@ axios.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
+        // Check if user is admin or regular user
+        const userRole = localStorage.getItem('role');
+        const refreshEndpoint = userRole === 'admin' ? '/api/admin/refresh-token' : '/api/users/refresh-token';
+        
         // Try to refresh the token
-        await axios.post('/api/users/refresh-token');
+        await axios.post(refreshEndpoint);
         
         // Retry the original request
         return axios(originalRequest);
@@ -49,14 +53,17 @@ axios.interceptors.response.use(
         // Refresh failed, clear user data and redirect to login
         console.error('Token refresh failed:', refreshError);
         
+        // Check role before clearing localStorage
+        const userRole = localStorage.getItem('role');
+        
         // Clear localStorage
         localStorage.removeItem('userID');
         localStorage.removeItem('userName');
         localStorage.removeItem('userEmail');
         localStorage.removeItem('role');
         
-        // Redirect to login page
-        window.location.href = '/login';
+        // Redirect to appropriate page
+        window.location.href = userRole === 'admin' ? '/' : '/login';
         
         return Promise.reject(refreshError);
       }

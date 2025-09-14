@@ -17,26 +17,62 @@ const PetProvider = ({ children }) => {
 
   const handleLogout = useCallback(async () => {
     try {
+      // Determine logout endpoint based on user role
+      const userRole = localStorage.getItem('role');
+      const logoutEndpoint = userRole === 'admin' ? '/api/admin/logout' : '/api/users/logout';
+      
       // Call logout endpoint to clear cookies
-      await axios.post('/api/users/logout');
+      await axios.post(logoutEndpoint);
+      
+      // Clear local storage
+      localStorage.clear();
+      setUserID(null);
+      setLoginStatus(false);
+      setCart([]);
+      setWishlist([]);
+      
+      // Redirect based on user role
+      if (userRole === 'admin') {
+        navigate('/'); // Admin redirects to home page
+      } else {
+        navigate('/login'); // Regular users redirect to login
+      }
     } catch (error) {
       console.error('Logout API call failed:', error);
       // Continue with local cleanup even if API call fails
+      
+      // Determine redirect for error case too
+      const userRole = localStorage.getItem('role');
+      
+      // Clear local storage
+      localStorage.clear();
+      setUserID(null);
+      setLoginStatus(false);
+      setCart([]);
+      setWishlist([]);
+      
+      // Redirect based on user role
+      if (userRole === 'admin') {
+        navigate('/'); // Admin redirects to home page
+      } else {
+        navigate('/login'); // Regular users redirect to login
+      }
     }
-    
-    // Clear local storage
-    localStorage.clear();
-    setUserID(null);
-    setLoginStatus(false);
-    setCart([]);
-    setWishlist([]);
-    navigate('/login');
   }, [navigate]);
 
   const handleLoginSuccess = useCallback((userData) => {
     // Update context state after successful login
     setUserID(userData.userID);
     setLoginStatus(true);
+    
+    // Store additional user data for profile auto-fill
+    if (userData.name) {
+      localStorage.setItem('userName', userData.name);
+    }
+    if (userData.email) {
+      localStorage.setItem('userEmail', userData.email);
+    }
+    
     // You might want to fetch cart and wishlist here too
   }, []);
 
@@ -46,19 +82,36 @@ const PetProvider = ({ children }) => {
         // Check if user data exists in localStorage
         const storedUserID = localStorage.getItem('userID');
         const userName = localStorage.getItem('userName');
+        const userRole = localStorage.getItem('role');
         
-        if (storedUserID && userName) {
-          setUserID(storedUserID); // Update userID state
-          // Try to make an authenticated request to verify the session
-          try {
-            await axios.get(`/api/users/${storedUserID}/cart`);
-            setLoginStatus(true);
-          } catch (error) {
-            if (error.response?.status === 401) {
-              // Authentication failed, clear local data
-              localStorage.clear();
-              setUserID(null);
-              setLoginStatus(false);
+        if (userName && (storedUserID || userRole === 'admin')) {
+          if (userRole === 'admin') {
+            // For admin, try to make an authenticated request to verify the session
+            try {
+              await axios.get('/api/admin/users'); // Any protected admin endpoint
+              setLoginStatus(true);
+            } catch (error) {
+              if (error.response?.status === 401) {
+                // Authentication failed, clear local data
+                localStorage.clear();
+                setUserID(null);
+                setLoginStatus(false);
+              }
+            }
+          } else if (storedUserID) {
+            // For regular users
+            setUserID(storedUserID); // Update userID state
+            // Try to make an authenticated request to verify the session
+            try {
+              await axios.get(`/api/users/${storedUserID}/cart`);
+              setLoginStatus(true);
+            } catch (error) {
+              if (error.response?.status === 401) {
+                // Authentication failed, clear local data
+                localStorage.clear();
+                setUserID(null);
+                setLoginStatus(false);
+              }
             }
           }
         } else {

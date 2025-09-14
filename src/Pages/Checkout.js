@@ -43,6 +43,35 @@ export default function Checkout() {
     specialInstructions: ''
   });
 
+  // Auto-fill form with profile data when component mounts
+  useEffect(() => {
+    const autoFillFromProfile = () => {
+      const profileData = {
+        fullName: localStorage.getItem('name') || localStorage.getItem('userName') || '',
+        phoneNumber: localStorage.getItem('phone') || '',
+        email: localStorage.getItem('email') || localStorage.getItem('userEmail') || '',
+        streetAddress: localStorage.getItem('address') || '',
+        city: localStorage.getItem('city') || '',
+        state: localStorage.getItem('state') || '',
+        pincode: localStorage.getItem('pincode') || ''
+      };
+
+      // Only update fields that are empty to avoid overwriting user input
+      setFormData(prevState => ({
+        ...prevState,
+        fullName: prevState.fullName || profileData.fullName,
+        phoneNumber: prevState.phoneNumber || profileData.phoneNumber,
+        email: prevState.email || profileData.email,
+        streetAddress: prevState.streetAddress || profileData.streetAddress,
+        city: prevState.city || profileData.city,
+        state: prevState.state || profileData.state,
+        pincode: prevState.pincode || profileData.pincode
+      }));
+    };
+
+    autoFillFromProfile();
+  }, []);
+
   useEffect(() => {
     if (!loginStatus) {
       toast.error('Please log in to proceed with checkout');
@@ -61,6 +90,32 @@ export default function Checkout() {
       ...prevState,
       [name]: value
     }));
+  };
+
+  // Function to fill form with saved profile data
+  const fillWithSavedProfile = () => {
+    const profileData = {
+      fullName: localStorage.getItem('name') || localStorage.getItem('userName') || '',
+      phoneNumber: localStorage.getItem('phone') || '',
+      email: localStorage.getItem('email') || localStorage.getItem('userEmail') || '',
+      streetAddress: localStorage.getItem('address') || '',
+      city: localStorage.getItem('city') || '',
+      state: localStorage.getItem('state') || '',
+      pincode: localStorage.getItem('pincode') || ''
+    };
+
+    // Check if any profile data exists
+    const hasProfileData = Object.values(profileData).some(value => value.trim() !== '');
+    
+    if (hasProfileData) {
+      setFormData(prevState => ({
+        ...prevState,
+        ...profileData
+      }));
+      toast.success('Profile information filled automatically!');
+    } else {
+      toast.info('No saved profile information found. Please fill your profile first.');
+    }
   };
 
   const validateForm = () => {
@@ -336,10 +391,25 @@ export default function Checkout() {
                 <MDBCol lg="8" className="mb-4">
                   <MDBCard style={{ borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
                     <MDBCardBody className="p-4">
-                      <MDBTypography tag="h4" className="mb-4" style={{ color: '#2d3436', fontWeight: 'bold' }}>
-                        <MDBIcon fas icon="shipping-fast" className="me-2" />
-                        Shipping Details
-                      </MDBTypography>
+                      <div className="d-flex justify-content-between align-items-center mb-4">
+                        <MDBTypography tag="h4" className="mb-0" style={{ color: '#2d3436', fontWeight: 'bold' }}>
+                          <MDBIcon fas icon="shipping-fast" className="me-2" />
+                          Shipping Details
+                        </MDBTypography>
+                        <Button
+                          onClick={fillWithSavedProfile}
+                          style={{ 
+                            backgroundColor: '#28a745', 
+                            border: 'none',
+                            fontSize: '0.85rem',
+                            padding: '0.5rem 1rem'
+                          }}
+                          className="d-flex align-items-center"
+                        >
+                          <MDBIcon fas icon="user" className="me-2" />
+                          Use Saved Profile
+                        </Button>
+                      </div>
 
                       <MDBRow className="mb-3">
                         <MDBCol md="6">

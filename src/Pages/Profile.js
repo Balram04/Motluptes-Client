@@ -23,21 +23,27 @@ export default function Profile() {
   const { loginStatus } = useContext(PetContext);
   const [showEditModal, setShowEditModal] = useState(false);
   
-  // Initialize user info with useMemo to optimize localStorage access
+  // Initialize user info with automatic population from login data
   const [userInfo, setUserInfo] = useState(() => {
-    const getLocalStorageData = () => ({
-      name: localStorage.getItem('name') || '',
-      email: localStorage.getItem('email') || '',
-      phone: localStorage.getItem('phone') || '',
-      address: localStorage.getItem('address') || '',
-      city: localStorage.getItem('city') || '',
-      state: localStorage.getItem('state') || '',
-      pincode: localStorage.getItem('pincode') || '',
-      petName: localStorage.getItem('petName') || '',
-      petType: localStorage.getItem('petType') || '',
-      petBreed: localStorage.getItem('petBreed') || '',
-      memberSince: localStorage.getItem('memberSince') || new Date().toISOString().split('T')[0]
-    });
+    const getLocalStorageData = () => {
+      // Get basic data from login/signup
+      const userName = localStorage.getItem('userName');
+      const userEmail = localStorage.getItem('userEmail');
+      
+      return {
+        name: localStorage.getItem('name') || userName || '',
+        email: localStorage.getItem('email') || userEmail || '',
+        phone: localStorage.getItem('phone') || '',
+        address: localStorage.getItem('address') || '',
+        city: localStorage.getItem('city') || '',
+        state: localStorage.getItem('state') || '',
+        pincode: localStorage.getItem('pincode') || '',
+        petName: localStorage.getItem('petName') || '',
+        petType: localStorage.getItem('petType') || '',
+        petBreed: localStorage.getItem('petBreed') || '',
+        memberSince: localStorage.getItem('memberSince') || new Date().toISOString().split('T')[0]
+      };
+    };
     
     return getLocalStorageData();
   });
@@ -48,6 +54,24 @@ export default function Profile() {
     if (!loginStatus) {
       toast.error('Please login to view your profile');
       return;
+    }
+
+    // Auto-populate profile with login data when login status changes
+    const userName = localStorage.getItem('userName');
+    const userEmail = localStorage.getItem('userEmail');
+    
+    if (userName || userEmail) {
+      setUserInfo(prevInfo => ({
+        ...prevInfo,
+        name: prevInfo.name || userName || '',
+        email: prevInfo.email || userEmail || ''
+      }));
+      
+      setEditForm(prevForm => ({
+        ...prevForm,
+        name: prevForm.name || userName || '',
+        email: prevForm.email || userEmail || ''
+      }));
     }
   }, [loginStatus]);
 
@@ -64,6 +88,14 @@ export default function Profile() {
     Object.keys(editForm).forEach(key => {
       localStorage.setItem(key, editForm[key]);
     });
+    
+    // Also update the login storage keys for consistency
+    if (editForm.name) {
+      localStorage.setItem('userName', editForm.name);
+    }
+    if (editForm.email) {
+      localStorage.setItem('userEmail', editForm.email);
+    }
     
     setUserInfo(editForm);
     setShowEditModal(false);

@@ -28,11 +28,11 @@ function AdminLogin() {
     try {
       const response = await axios.post('/api/admin/login', { email, password });
       
-      if (response?.data?.data) {
-        // Store admin credentials
+      if (response?.data?.status === 'success' && response?.data?.data) {
+        // Store admin credentials (tokens are in HTTP-only cookies)
         localStorage.setItem('role', 'admin');
-        localStorage.setItem('name', response.data.data.name);
-        localStorage.setItem('jwt_token', response.data.data.jwt_token);
+        localStorage.setItem('userName', response.data.data.name);
+        localStorage.setItem('userEmail', response.data.data.email);
         
         toast.success('Welcome to Admin Dashboard!');
         setLoginStatus(true);
@@ -51,26 +51,27 @@ function AdminLogin() {
 
   return (
     <div className="admin-login-page" style={{ 
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
+      background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #e9ecef 100%)', 
       minHeight: '100vh',
       display: 'flex',
       alignItems: 'center'
     }}>
-      <MDBContainer className="d-flex justify-content-center">
+      <MDBContainer className="d-flex justify-content-center" style={{ padding: '0 1rem' }}>
         <div className="admin-login-card" style={{
           background: 'white',
-          padding: '3rem',
+          padding: 'clamp(1.5rem, 4vw, 3rem)',
           borderRadius: '15px',
           boxShadow: '0 15px 35px rgba(0,0,0,0.1)',
           maxWidth: '450px',
-          width: '100%'
+          width: '100%',
+          margin: '1rem'
         }}>
           <div className="text-center mb-4">
             <MDBIcon 
               fas 
               icon="shield-alt" 
               size="3x" 
-              style={{ color: '#667eea' }}
+              style={{ color: '#f7711e' }}
               className="mb-3"
             />
             <h2 className="mb-1" style={{ color: '#333' }}>Admin Login</h2>
@@ -84,7 +85,7 @@ function AdminLogin() {
                 label="Admin Email" 
                 name="email"
                 required
-                value={""}
+              
                 placeholder="admin@doghub.com"
               />
             </div>
@@ -94,7 +95,6 @@ function AdminLogin() {
                 type="password" 
                 label="Password" 
                 name="password"
-                value={""}
                 required
                 placeholder="Enter your password"
               />
@@ -107,7 +107,7 @@ function AdminLogin() {
                 disabled={loading}
                 className="py-3"
                 style={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  background: 'linear-gradient(135deg, #f7711e 0%, #ed6335 100%)',
                   border: 'none',
                   borderRadius: '10px',
                   fontSize: '16px',
@@ -137,7 +137,7 @@ function AdminLogin() {
                 type="button"
                 className="btn btn-link text-decoration-none"
                 onClick={() => navigate('/')}
-                style={{ color: '#667eea' }}
+                style={{ color: '#f7711e' }}
               >
                 <MDBIcon fas icon="arrow-left" className="me-2" />
                 Back to Main Site
