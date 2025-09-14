@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   MDBContainer, 
   MDBCard, 
@@ -10,7 +10,7 @@ import {
   MDBRow,
   MDBCol
 } from 'mdb-react-ui-kit';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { axios } from '../Utils/Axios';
 import toast from 'react-hot-toast';
 import { FaPaw, FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -18,6 +18,7 @@ import '../Styles/Auth.css';
 
 function Registration() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -25,6 +26,14 @@ function Registration() {
     email: '',
     password: ''
   });
+
+  // Handle redirected email from login page
+  useEffect(() => {
+    if (location.state?.email) {
+      setFormData(prev => ({ ...prev, email: location.state.email }));
+      toast.info(location.state.message || 'Please create an account to continue');
+    }
+  }, [location.state]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

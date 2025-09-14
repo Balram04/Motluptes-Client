@@ -36,36 +36,43 @@ axios.interceptors.response.use(
     }
 
     // Handle authentication errors with token refresh
+    // Only attempt token refresh if user is authenticated and this isn't a login/register request
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+      const isLoginRequest = originalRequest.url?.includes('/login') || originalRequest.url?.includes('/register');
+      const isRefreshRequest = originalRequest.url?.includes('/refresh-token');
+      const userRole = localStorage.getItem('role');
+      const userID = localStorage.getItem('userID');
+      
+      // Only try to refresh if:
+      // 1. This is not a login/register request
+      // 2. This is not already a refresh request 
+      // 3. User has some authentication data stored
+      if (!isLoginRequest && !isRefreshRequest && (userRole || userID)) {
+        originalRequest._retry = true;
 
-      try {
-        // Check if user is admin or regular user
-        const userRole = localStorage.getItem('role');
-        const refreshEndpoint = userRole === 'admin' ? '/api/admin/refresh-token' : '/api/users/refresh-token';
-        
-        // Try to refresh the token
-        await axios.post(refreshEndpoint);
-        
-        // Retry the original request
-        return axios(originalRequest);
-      } catch (refreshError) {
-        // Refresh failed, clear user data and redirect to login
-        console.error('Token refresh failed:', refreshError);
-        
-        // Check role before clearing localStorage
-        const userRole = localStorage.getItem('role');
-        
-        // Clear localStorage
-        localStorage.removeItem('userID');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userEmail');
-        localStorage.removeItem('role');
-        
-        // Redirect to appropriate page
-        window.location.href = userRole === 'admin' ? '/' : '/login';
-        
-        return Promise.reject(refreshError);
+        try {
+          const refreshEndpoint = userRole === 'admin' ? '/api/admin/refresh-token' : '/api/users/refresh-token';
+          
+          // Try to refresh the token
+          await axios.post(refreshEndpoint);
+          
+          // Retry the original request
+          return axios(originalRequest);
+        } catch (refreshError) {
+          // Refresh failed, clear user data and redirect to login
+          console.error('Token refresh failed:', refreshError);
+          
+          // Clear localStorage
+          localStorage.removeItem('userID');
+          localStorage.removeItem('userName');
+          localStorage.removeItem('userEmail');
+          localStorage.removeItem('role');
+          
+          // Redirect to appropriate page
+          window.location.href = userRole === 'admin' ? '/' : '/login';
+          
+          return Promise.reject(refreshError);
+        }
       }
     }
 

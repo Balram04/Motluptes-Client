@@ -9,10 +9,17 @@ const PetContext = createContext();
 const PetProvider = ({ children }) => {
   const [userID, setUserID] = useState(localStorage.getItem('userID'));
   const [products, setProducts] = useState([]);
-  const [loginStatus, setLoginStatus] = useState(false);
+  // Initialize loginStatus based on localStorage to avoid showing login prompt during auth check
+  const [loginStatus, setLoginStatus] = useState(() => {
+    const storedUserID = localStorage.getItem('userID');
+    const userName = localStorage.getItem('userName');
+    const userRole = localStorage.getItem('role');
+    return !!(userName && (storedUserID || userRole === 'admin'));
+  });
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true); // Separate auth loading state
   const navigate = useNavigate();
 
   const handleLogout = useCallback(async () => {
@@ -78,6 +85,7 @@ const PetProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuthentication = async () => {
+      setAuthLoading(true);
       try {
         // Check if user data exists in localStorage
         const storedUserID = localStorage.getItem('userID');
@@ -124,6 +132,7 @@ const PetProvider = ({ children }) => {
         setLoginStatus(false);
       } finally {
         setLoading(false);
+        setAuthLoading(false);
       }
     };
 
@@ -328,6 +337,7 @@ const PetProvider = ({ children }) => {
         loginStatus,
         setLoginStatus,
         loading,
+        authLoading,
         handleLogout,
         handleLoginSuccess,
         fetchWishlist,

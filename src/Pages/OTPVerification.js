@@ -22,7 +22,7 @@ function OTPVerification() {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
-  const [countdown, setCountdown] = useState(120); // 2 minutes countdown
+  const [countdown, setCountdown] = useState(180); // 3 minutes countdown
   const [canResend, setCanResend] = useState(false);
   const [otp, setOtp] = useState('');
   
@@ -276,7 +276,7 @@ function OTPVerification() {
                   <div className="alert alert-info">
                     <small>
                       <FaShieldAlt className="me-2" />
-                      <strong>Security tip:</strong> This code expires in 2 minutes. 
+                      <strong>Security tip:</strong> This code expires in 3 minutes. 
                       Check your spam folder if you don't see the email.
                     </small>
                   </div>

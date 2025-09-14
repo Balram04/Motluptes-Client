@@ -133,8 +133,20 @@ function Login() {
         const status = error.response.status;
         const message = error.response.data?.message;
         const requiresVerification = error.response.data?.requiresVerification;
+        const requiresRegistration = error.response.data?.requiresRegistration;
         
-        if (status === 401) {
+        if (status === 404 && requiresRegistration) {
+          // User not registered - show signup prompt
+          toast.error('Email not registered. Please sign up to create an account.');
+          setTimeout(() => {
+            navigate('/registration', { 
+              state: { 
+                email: trimmedEmail,
+                message: 'Please create an account to continue'
+              }
+            });
+          }, 2000);
+        } else if (status === 401) {
           if (requiresVerification) {
             toast.error('Please verify your email before logging in.');
             // Navigate to OTP verification page

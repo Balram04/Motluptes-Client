@@ -27,6 +27,7 @@ export default function Cart() {
     handlePrice,
     totalPrice = 0,
     loginStatus,
+    authLoading,
   } = useContext(PetContext);
 
   const [loading, setLoading] = useState(true);
@@ -34,6 +35,11 @@ export default function Cart() {
 
   useEffect(() => {
     const loadCart = async () => {
+      // Wait for auth check to complete before checking login status
+      if (authLoading) {
+        return;
+      }
+
       if (!loginStatus) {
         setError('Please log in to view your cart');
         setLoading(false);
@@ -52,7 +58,7 @@ export default function Cart() {
     };
 
     loadCart();
-  }, [fetchCart, loginStatus]);
+  }, [fetchCart, loginStatus, authLoading]);
 
   const handleQuantityChange = async (cartID, change) => {
     try {
@@ -74,7 +80,7 @@ export default function Cart() {
     }
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <section className="cart-loading-section">
         <MDBContainer className="py-5 h-100">
@@ -82,7 +88,7 @@ export default function Cart() {
             <div className="spinner-border" style={{ color: '#ed6335' }} role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
-            <h5 className="mt-3">Loading your cart...</h5>
+            <h5 className="mt-3">{authLoading ? 'Checking authentication...' : 'Loading your cart...'}</h5>
           </div>
         </MDBContainer>
       </section>
