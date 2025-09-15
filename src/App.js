@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { PetProvider } from './Context/Context';
 import { Toaster } from 'react-hot-toast';
+import ErrorBoundary from './Components/ErrorBoundary';
 import Home from './Pages/Home';
 import Registration from './Pages/Registration';
 import OTPVerification from './Pages/OTPVerification';
@@ -29,11 +30,38 @@ function App() {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
-    <>
+    <ErrorBoundary>
       <PetProvider>
         {/* Navbar & Footer is common for every route except Dashboard and Admin Login */}
         {!isDashboardRoute && !isAdminRoute && <Navbar />}
-        <Toaster />
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+            success: {
+              duration: 3000,
+              theme: {
+                primary: '#4aed88',
+              },
+            },
+            error: {
+              duration: 4000,
+              theme: {
+                primary: '#f56565',
+              },
+            },
+          }}
+          containerStyle={{
+            top: 20,
+            left: 20,
+            bottom: 20,
+            right: 20,
+          }}
+        />
         <div className="main-content">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -65,7 +93,7 @@ function App() {
         </div>
         {!isDashboardRoute && !isAdminRoute && <Footer />}
       </PetProvider>
-    </>
+    </ErrorBoundary>
   );
 }
 

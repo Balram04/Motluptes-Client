@@ -31,7 +31,12 @@ function OTPVerification() {
   // Redirect if no email provided
   useEffect(() => {
     if (!email) {
-      toast.error('No email provided. Please register first.');
+      try {
+        toast.error('No email provided. Please register first.');
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+        alert('No email provided. Please register first.');
+      }
       navigate('/registration');
     }
   }, [email, navigate]);

@@ -31,7 +31,11 @@ function Registration() {
   useEffect(() => {
     if (location.state?.email) {
       setFormData(prev => ({ ...prev, email: location.state.email }));
-      toast.info(location.state.message || 'Please create an account to continue');
+      try {
+        toast.info(location.state.message || 'Please create an account to continue');
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+      }
     }
   }, [location.state]);
 
@@ -55,32 +59,68 @@ function Registration() {
     // Enhanced Validation
     if (!trimmedName || !trimmedEmail || !trimmedPassword) {
       setLoading(false);
-      return toast.error('Please fill in all fields');
+      try {
+        return toast.error('Please fill in all fields');
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+        alert('Please fill in all fields');
+        return;
+      }
     }
 
     if (trimmedName.length < 2) {
       setLoading(false);
-      return toast.error('Name must be at least 2 characters long');
+      try {
+        return toast.error('Name must be at least 2 characters long');
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+        alert('Name must be at least 2 characters long');
+        return;
+      }
     }
 
     if (!/^[a-zA-Z\s]+$/.test(trimmedName)) {
       setLoading(false);
-      return toast.error('Name should only contain letters and spaces');
+      try {
+        return toast.error('Name should only contain letters and spaces');
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+        alert('Name should only contain letters and spaces');
+        return;
+      }
     }
 
     if (!/\S+@\S+\.\S+/.test(trimmedEmail)) {
       setLoading(false);
-      return toast.error('Please enter a valid email address');
+      try {
+        return toast.error('Please enter a valid email address');
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+        alert('Please enter a valid email address');
+        return;
+      }
     }
 
     if (trimmedPassword.length < 6) {
       setLoading(false);
-      return toast.error('Password must be at least 6 characters long');
+      try {
+        return toast.error('Password must be at least 6 characters long');
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+        alert('Password must be at least 6 characters long');
+        return;
+      }
     }
 
     if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(trimmedPassword)) {
       setLoading(false);
-      return toast.error('Password must contain at least one uppercase letter, one lowercase letter, and one number');
+      try {
+        return toast.error('Password must contain at least one uppercase letter, one lowercase letter, and one number');
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+        alert('Password must contain at least one uppercase letter, one lowercase letter, and one number');
+        return;
+      }
     }
 
     try {
@@ -93,7 +133,11 @@ function Registration() {
       const response = await axios.post('/api/users/register', userData);
       
       if (response?.data?.status === 'success') {
-        toast.success('📧 Verification code sent! Please check your email.');
+        try {
+          toast.success('📧 Verification code sent! Please check your email.');
+        } catch (toastError) {
+          console.error('Toast error:', toastError);
+        }
         
         // Store user data temporarily for auto-fill after verification
         localStorage.setItem('tempUserName', trimmedName);
@@ -125,19 +169,49 @@ function Registration() {
         
         if (status === 400) {
           if (message?.includes('email')) {
-            toast.error('This email is already registered. Please use a different email or try logging in.');
+            try {
+              toast.error('This email is already registered. Please use a different email or try logging in.');
+            } catch (toastError) {
+              console.error('Toast error:', toastError);
+              alert('This email is already registered. Please use a different email or try logging in.');
+            }
           } else {
-            toast.error(message || 'Invalid registration data');
+            try {
+              toast.error(message || 'Invalid registration data');
+            } catch (toastError) {
+              console.error('Toast error:', toastError);
+              alert(message || 'Invalid registration data');
+            }
           }
         } else if (status >= 500) {
-          toast.error('Server error. Please try again later.');
+          try {
+            toast.error('Server error. Please try again later.');
+          } catch (toastError) {
+            console.error('Toast error:', toastError);
+            alert('Server error. Please try again later.');
+          }
         } else {
-          toast.error(message || 'Registration failed');
+          try {
+            toast.error(message || 'Registration failed');
+          } catch (toastError) {
+            console.error('Toast error:', toastError);
+            alert(message || 'Registration failed');
+          }
         }
       } else if (error.request) {
-        toast.error('Network error. Please check your connection.');
+        try {
+          toast.error('Network error. Please check your connection.');
+        } catch (toastError) {
+          console.error('Toast error:', toastError);
+          alert('Network error. Please check your connection.');
+        }
       } else {
-        toast.error(error.message || 'Registration failed. Please try again.');
+        try {
+          toast.error(error.message || 'Registration failed. Please try again.');
+        } catch (toastError) {
+          console.error('Toast error:', toastError);
+          alert(error.message || 'Registration failed. Please try again.');
+        }
       }
       
       // Clear sensitive data on error

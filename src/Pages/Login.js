@@ -32,13 +32,21 @@ function Login() {
   // Check if user just verified their email
   useEffect(() => {
     if (location.state?.justVerified) {
-      toast.success('🎉 Email verified successfully! Please login to continue.');
+      try {
+        toast.success('🎉 Email verified successfully! Please login to continue.');
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+      }
       // Pre-fill email if available
       if (location.state?.email) {
         setFormData(prev => ({ ...prev, email: location.state.email }));
       }
     } else if (location.state?.message) {
-      toast.info(location.state.message);
+      try {
+        toast.info(location.state.message);
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+      }
     }
   }, [location.state]);
   const handleInputChange = (e) => {
@@ -53,31 +61,55 @@ function Login() {
     e.preventDefault();
     setLoading(true);
 
+    console.log('Login attempt started');
+    
     const { email, password } = formData;
     const trimmedEmail = email.trim().toLowerCase();
     const adminEmail = process.env.REACT_APP_ADMIN_EMAIL;
 
+    console.log('Email:', trimmedEmail, 'Admin Email:', adminEmail);
+
     // Enhanced Validation
     if (!trimmedEmail || !password) {
       setLoading(false);
-      return toast.error('Please fill in all fields');
+      try {
+        return toast.error('Please fill in all fields');
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+        alert('Please fill in all fields');
+        return;
+      }
     }
 
     if (!/\S+@\S+\.\S+/.test(trimmedEmail)) {
       setLoading(false);
-      return toast.error('Please enter a valid email address');
+      try {
+        return toast.error('Please enter a valid email address');
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+        alert('Please enter a valid email address');
+        return;
+      }
     }
 
     if (password.length < 3) {
       setLoading(false);
-      return toast.error('Password must be at least 3 characters long');
+      try {
+        return toast.error('Password must be at least 3 characters long');
+      } catch (toastError) {
+        console.error('Toast error:', toastError);
+        alert('Password must be at least 3 characters long');
+        return;
+      }
     }
 
     const endpoint = trimmedEmail === adminEmail ? '/api/admin/login' : '/api/users/login';
     const loginData = { email: trimmedEmail, password };
 
     try {
+      console.log('Making login request to:', endpoint);
       const response = await axios.post(endpoint, loginData);
+      console.log('Login response received:', response?.data?.status);
       
       // Check if response is successful
       if (response?.data?.status === 'success' && response?.data?.data) {
@@ -105,7 +137,11 @@ function Login() {
           }
         }
 
-        toast.success(response.data?.message || 'Login successful!');
+        try {
+          toast.success(response.data?.message || 'Login successful!');
+        } catch (toastError) {
+          console.error('Toast error:', toastError);
+        }
         setLoginStatus(true);
         
         // Update context with user data
@@ -137,8 +173,16 @@ function Login() {
         
         if (status === 404 && requiresRegistration) {
           // User not registered - show signup prompt
-          toast.error('Email not registered. Please sign up to create an account.');
+          console.log('User not registered, redirecting to registration');
+          try {
+            toast.error('Email not registered. Please sign up to create an account.');
+          } catch (toastError) {
+            console.error('Toast error:', toastError);
+            // Fallback alert if toast fails
+            alert('Email not registered. Please sign up to create an account.');
+          }
           setTimeout(() => {
+            console.log('Navigating to registration page');
             navigate('/registration', { 
               state: { 
                 email: trimmedEmail,
@@ -148,7 +192,12 @@ function Login() {
           }, 2000);
         } else if (status === 401) {
           if (requiresVerification) {
-            toast.error('Please verify your email before logging in.');
+            try {
+              toast.error('Please verify your email before logging in.');
+            } catch (toastError) {
+              console.error('Toast error:', toastError);
+              alert('Please verify your email before logging in.');
+            }
             // Navigate to OTP verification page
             setTimeout(() => {
               navigate('/verify-otp', { 
@@ -159,21 +208,51 @@ function Login() {
               });
             }, 2000);
           } else {
-            toast.error(message || 'Invalid email or password');
+            try {
+              toast.error(message || 'Invalid email or password');
+            } catch (toastError) {
+              console.error('Toast error:', toastError);
+              alert(message || 'Invalid email or password');
+            }
           }
         } else if (status === 400) {
-          toast.error(message || 'Invalid input data');
+          try {
+            toast.error(message || 'Invalid input data');
+          } catch (toastError) {
+            console.error('Toast error:', toastError);
+            alert(message || 'Invalid input data');
+          }
         } else if (status >= 500) {
-          toast.error('Server error. Please try again later.');
+          try {
+            toast.error('Server error. Please try again later.');
+          } catch (toastError) {
+            console.error('Toast error:', toastError);
+            alert('Server error. Please try again later.');
+          }
         } else {
-          toast.error(message || 'Login failed');
+          try {
+            toast.error(message || 'Login failed');
+          } catch (toastError) {
+            console.error('Toast error:', toastError);
+            alert(message || 'Login failed');
+          }
         }
       } else if (error.request) {
         // Network error
-        toast.error('Network error. Please check your connection.');
+        try {
+          toast.error('Network error. Please check your connection.');
+        } catch (toastError) {
+          console.error('Toast error:', toastError);
+          alert('Network error. Please check your connection.');
+        }
       } else {
         // Other errors
-        toast.error(error.message || 'Login failed. Please try again.');
+        try {
+          toast.error(error.message || 'Login failed. Please try again.');
+        } catch (toastError) {
+          console.error('Toast error:', toastError);
+          alert(error.message || 'Login failed. Please try again.');
+        }
       }
       
       // Clear sensitive form data on error
